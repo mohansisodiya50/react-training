@@ -3,6 +3,8 @@ import './App.css';
 
 import Movies from './components/Movies/Movies';
 
+import Movie from './components/Movies/Movie';
+
 import Users from './components/Lifecycle/Users';
 
 class App extends React.Component {
@@ -11,6 +13,7 @@ class App extends React.Component {
 			<div className="App">
 				<Movies />
 				{/* <Users /> */}
+				{/* <Movie>Mohan Sisodiya</Movie> */}
 			</div>
 		);
 	}

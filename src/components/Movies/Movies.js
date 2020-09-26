@@ -1,13 +1,35 @@
 import React from 'react';
 import Movie from './Movie';
 
-import axios from 'axios';
+import axios from '../../axios';
+
+import { ClipLoader } from 'react-spinners';
 
 export default class Movies extends React.Component {
 	state = {
 		name: '',
 		rating: '',
-		movies: []
+		movies: [],
+		loading: true
+	};
+
+	getMovies = () => {
+		axios.get('/movies.json').then((response) => {
+			console.log('response ', response.data);
+			const data = response.data;
+
+			const movies = [];
+
+			if (!data) return;
+
+			Object.entries(data).map((item) => movies.push({ key: item[0], ...item[1] }));
+
+			this.setState({ movies: movies, loading: false });
+		});
+	};
+
+	componentDidMount = () => {
+		this.getMovies();
 	};
 
 	handleNameChange = (event) => {
@@ -18,29 +40,41 @@ export default class Movies extends React.Component {
 		this.setState({ rating: event.target.value });
 	};
 
-	handleAdd = () => {
+	handleAdd = async () => {
 		const updatedMovies = this.state.movies;
 
-		updatedMovies.push({ name: this.state.name, rating: this.state.rating });
+		const movie = { name: this.state.name, rating: this.state.rating };
+
+		let key;
+
+		await axios
+			.post('/movies.json', movie)
+			.then((response) => {
+				key = response.data.name;
+				movie.key = key;
+			})
+			.catch((error) => console.log('error ', error));
+
+		updatedMovies.push(movie);
 		this.setState({ movies: updatedMovies, name: '', rating: '' });
 	};
 
 	handleDelete = (deleteMovie) => {
-		const movies = this.state.movies;
+		let movies = this.state.movies;
 
-		this.setState({ movies: movies.filter((movie) => movie.name !== deleteMovie.name) });
+		movies = movies.filter((movie) => movie.name !== deleteMovie.name);
+
+		this.setState({ movies: movies });
+
+		axios.delete(`/movies/${deleteMovie.key}.json`);
 	};
-
-	// componentDidMount = () => {
-	// 	console.log('componentDidMount ...');
-	// }
 
 	render() {
 		return (
-			<div>
+			<>
 				<div className="movies">
 					<input
-						type="password"
+						type="text"
 						placeholder="Enter movie name"
 						onChange={this.handleNameChange}
 						value={this.state.name}
@@ -53,12 +87,18 @@ export default class Movies extends React.Component {
 					/>
 					<button onClick={this.handleAdd}>Add</button>
 				</div>
-				<div>
-					{this.state.movies.map((movie, index) => (
-						<Movie movie={movie} deleteMovie={this.handleDelete} key={index} />
-					))}
-				</div>
-			</div>
+				{this.state.loading ? (
+					<div>
+						<ClipLoader loading />
+					</div>
+				) : (
+					<div>
+						{this.state.movies.map((movie, index) => (
+							<Movie movie={movie} deleteMovie={this.handleDelete} key={index} />
+						))}
+					</div>
+				)}
+			</>
 		);
 	}
 }
