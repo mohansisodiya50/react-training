@@ -1,16 +1,15 @@
 import React from 'react';
 import './App.css';
+import UseStateWithArray from './components/Hooks/UseState/UseStateWithArray';
 
-import Movies from './components/Movies/Movies';
-
-import Users from './components/Lifecycle/Users';
+import ClassExample from './components/Hooks/UseEffect/ClassExample';
+import UseEffectExample from './components/Hooks/UseEffect/UseEffectExample';
 
 class App extends React.Component {
 	render() {
 		return (
 			<div className="App">
-				<Movies />
-				{/* <Users /> */}
+                <UseEffectExample />
 			</div>
 		);
 	}

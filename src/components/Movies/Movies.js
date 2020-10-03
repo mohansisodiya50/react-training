@@ -1,8 +1,6 @@
 import React from 'react';
 import Movie from './Movie';
 
-import axios from 'axios';
-
 export default class Movies extends React.Component {
 	state = {
 		name: '',
@@ -40,7 +38,7 @@ export default class Movies extends React.Component {
 			<div>
 				<div className="movies">
 					<input
-						type="password"
+						type="text"
 						placeholder="Enter movie name"
 						onChange={this.handleNameChange}
 						value={this.state.name}
